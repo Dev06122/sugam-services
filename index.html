@@ -4,355 +4,77 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sugam Digital Services</title>
-
 <style>
-body{
-    font-family: Arial, sans-serif;
-    margin:0;
-    padding:20px;
-    background:#f4f4f4;
-}
-
-.container{
-    max-width:900px;
-    margin:auto;
-}
-
-h1{
-    text-align:center;
-    margin-bottom:20px;
-}
-
-.card{
-    background:white;
-    padding:15px;
-    margin-bottom:15px;
-    border-radius:12px;
-    box-shadow:0 2px 8px rgba(0,0,0,.1);
-}
-
-.service-title{
-    font-size:22px;
-    font-weight:bold;
-}
-
-.service-gu{
-    color:#666;
-    margin-top:5px;
-    margin-bottom:15px;
-}
-
-ul{
-    padding-left:20px;
-}
-
-li{
-    margin-bottom:5px;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    border:1px solid #ccc;
-    border-radius:10px;
-    box-sizing:border-box;
-    margin-bottom:20px;
-    font-size:16px;
-}
-
-.no-result{
-    text-align:center;
-    color:#888;
-    margin-top:30px;
-}
+body{font-family:Arial,sans-serif;margin:0;background:#f4f4f4;padding:16px}
+.container{max-width:1000px;margin:auto}
+h1{text-align:center}
+#search{width:100%;padding:12px;border-radius:12px;border:1px solid #ccc;box-sizing:border-box;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.08);cursor:pointer;min-height:120px;display:flex;flex-direction:column;justify-content:center}
+.card:hover{transform:translateY(-2px)}
+.en{font-weight:bold}
+.gu{color:#666;margin-top:8px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55)}
+.modal-content{background:#fff;width:90%;max-width:600px;margin:10vh auto;padding:20px;border-radius:16px;max-height:75vh;overflow:auto}
+.close{float:right;font-size:24px;cursor:pointer}
 </style>
 </head>
-
 <body>
-
 <div class="container">
-
 <h1>Sugam Digital Services</h1>
+<input id="search" placeholder="Search Gujarati or English...">
+<div id="results" class="grid"></div>
+</div>
 
-<input
-type="text"
-id="search"
-placeholder="Search Gujarati or English..."
->
-
-<div id="results"></div>
-
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div id="details"></div>
+  </div>
 </div>
 
 <script>
-
-const services = [
-
-{
-serviceEn:"Income Certificate",
-serviceGu:"આવકનો દાખલો",
-documents:[
-"Aadhaar Card",
-"Ration Card",
-"PAN Card",
-"Residence Proof",
-"Income Proof",
-"Bank Passbook",
-"Passport Photo",
-"Mobile Number",
-"Affidavit"
-]
-},
-
-{
-serviceEn:"SEBC / OBC Certificate",
-serviceGu:"SEBC / OBC પ્રમાણપત્ર",
-documents:[
-"Aadhaar Card",
-"Ration Card",
-"School LC",
-"Birth Certificate",
-"Caste Certificate",
-"Residence Proof",
-"Voter ID",
-"Passport Photo",
-"Mobile Number",
-"Affidavit"
-]
-},
-
-{
-serviceEn:"EWS Certificate",
-serviceGu:"EWS પ્રમાણપત્ર",
-documents:[
-"Aadhaar Card",
-"Ration Card",
-"Income Certificate",
-"Property Documents",
-"Residence Proof",
-"PAN Card",
-"Bank Passbook",
-"Passport Photo",
-"Mobile Number"
-]
-},
-
-{
-serviceEn:"Non-Creamy Layer Certificate",
-serviceGu:"Non-Creamy Layer પ્રમાણપત્ર",
-documents:[
-"Aadhaar Card",
-"SEBC Certificate",
-"Ration Card",
-"3 Years Income Proof",
-"ITR/Form 16",
-"Salary Certificate",
-"Residence Proof",
-"Passport Photo",
-"Mobile Number"
-]
-},
-
-{
-serviceEn:"SC Caste Certificate",
-serviceGu:"SC જાતિ દાખલો",
-documents:[
-"Aadhaar Card",
-"Ration Card",
-"School LC",
-"Birth Certificate",
-"Caste Proof",
-"Residence Proof",
-"Voter ID",
-"Passport Photo",
-"Affidavit"
-]
-},
-
-{
-serviceEn:"ST Caste Certificate",
-serviceGu:"ST જાતિ દાખલો",
-documents:[
-"Aadhaar Card",
-"Ration Card",
-"School LC",
-"Gram Panchayat Certificate",
-"ST Certificate Proof",
-"Residence Proof",
-"Passport Photo",
-"Affidavit"
-]
-},
-
-{
-serviceEn:"Vimukt Jati Certificate",
-serviceGu:"વિમુક્ત જાતિ પ્રમાણપત્ર",
-documents:[
-"Aadhaar Card",
-"Ration Card",
-"School LC",
-"Caste Proof",
-"Residence Proof",
-"Passport Photo",
-"Gram Panchayat Certificate"
-]
-},
-
-{
-serviceEn:"New Ration Card",
-serviceGu:"નવું રેશન કાર્ડ",
-documents:[
-"Family Aadhaar Cards",
-"Electricity Bill",
-"Property Documents",
-"Gas Book",
-"Bank Passbook",
-"Income Certificate",
-"Passport Photo",
-"Mobile Number",
-"Old Ration Card (if any)"
-]
-},
-
-{
-serviceEn:"Add Name In Ration Card",
-serviceGu:"રેશન કાર્ડમાં નામ ઉમેરવું",
-documents:[
-"Birth Certificate",
-"Aadhaar Card",
-"Existing Ration Card"
-]
-},
-
-{
-serviceEn:"Remove Name From Ration Card",
-serviceGu:"રેશન કાર્ડમાંથી નામ રદ કરવું",
-documents:[
-"Death Certificate / Marriage Certificate",
-"Relevant Proof",
-"Existing Ration Card",
-"Aadhaar Card"
-]
-},
-
-{
-serviceEn:"Separate Ration Card",
-serviceGu:"અલગ રેશન કાર્ડ મેળવવા",
-documents:[
-"Family Separation Proof",
-"Aadhaar Card",
-"Residence Proof",
-"Existing Ration Card",
-"Income Certificate"
-]
-},
-
-{
-serviceEn:"Ration Card Correction",
-serviceGu:"રેશન કાર્ડમાં સુધારો",
-documents:[
-"Correction Proof",
-"Aadhaar Card",
-"Existing Ration Card"
-]
-},
-
-{
-serviceEn:"Duplicate Ration Card",
-serviceGu:"ડુપ્લિકેટ રેશન કાર્ડ",
-documents:[
-"Application",
-"Aadhaar Card",
-"Ration Card Number",
-"FIR (if lost)",
-"Mobile Number"
-]
-},
-
-{
-serviceEn:"Ration Card Copy",
-serviceGu:"રેશન કાર્ડ નકલ",
-documents:[
-"Application",
-"Identity Proof",
-"Relevant Details",
-"Fee Receipt"
-]
-},
-
-{
-serviceEn:"Non-Creamy Layer (Central)",
-serviceGu:"Non-Creamy Layer (ભારત સરકાર)",
-documents:[
-"Aadhaar Card",
-"SEBC Certificate",
-"3 Years Income Proof",
-"ITR",
-"Ration Card",
-"Residence Proof",
-"Passport Photo",
-"Mobile Number"
-]
-}
-
+const services=[
+{serviceEn:"Income Certificate",serviceGu:"આવકનો દાખલો",documents:["Aadhaar Card","Ration Card","PAN Card","Residence Proof","Income Proof"]},
+{serviceEn:"SEBC/OBC Certificate",serviceGu:"SEBC/OBC પ્રમાણપત્ર",documents:["Aadhaar Card","Ration Card","School LC","Birth Certificate"]},
+{serviceEn:"EWS Certificate",serviceGu:"EWS પ્રમાણપત્ર",documents:["Aadhaar Card","Ration Card","Income Certificate","PAN Card"]},
+{serviceEn:"Non-Creamy Layer",serviceGu:"Non-Creamy Layer પ્રમાણપત્ર",documents:["Aadhaar Card","SEBC Certificate","ITR/Form16"]},
+{serviceEn:"SC Caste Certificate",serviceGu:"SC જાતિ દાખલો",documents:["Aadhaar Card","Ration Card","School LC"]},
+{serviceEn:"ST Caste Certificate",serviceGu:"ST જાતિ દાખલો",documents:["Aadhaar Card","Ration Card","School LC"]},
+{serviceEn:"Vimukt Jati Certificate",serviceGu:"વિમુક્ત જાતિ પ્રમાણપત્ર",documents:["Aadhaar Card","Ration Card","School LC"]},
+{serviceEn:"New Ration Card",serviceGu:"નવું રેશન કાર્ડ",documents:["Family Aadhaar","Electricity Bill","Gas Book"]},
+{serviceEn:"Add Name In Ration Card",serviceGu:"રેશન કાર્ડમાં નામ ઉમેરવું",documents:["Birth Certificate","Aadhaar Card"]},
+{serviceEn:"Remove Name From Ration Card",serviceGu:"રેશન કાર્ડમાંથી નામ રદ કરવું",documents:["Death/Marriage Certificate","Aadhaar Card"]},
+{serviceEn:"Separate Ration Card",serviceGu:"અલગ રેશન કાર્ડ",documents:["Family Separation Proof","Aadhaar Card"]},
+{serviceEn:"Ration Card Correction",serviceGu:"રેશન કાર્ડમાં સુધારો",documents:["Correction Proof","Aadhaar Card"]},
+{serviceEn:"Duplicate Ration Card",serviceGu:"ડુપ્લિકેટ રેશન કાર્ડ",documents:["Application","Ration Card Number","FIR"]},
+{serviceEn:"Ration Card Copy",serviceGu:"રેશન કાર્ડ નકલ",documents:["Application","Identity Proof"]},
+{serviceEn:"Non-Creamy Layer (Central)",serviceGu:"Non-Creamy Layer (ભારત સરકાર)",documents:["Aadhaar Card","SEBC Certificate","ITR"]}
 ];
 
-function renderServices(filter=""){
-
-const results=document.getElementById("results");
-
-const filtered=services.filter(service=>{
-
-return service.serviceEn.toLowerCase().includes(filter.toLowerCase())
-||
-service.serviceGu.includes(filter);
-
-});
-
-if(filtered.length===0){
-
-results.innerHTML=
-'<div class="no-result">No Service Found</div>';
-
-return;
+function render(filter=''){
+ const results=document.getElementById('results');
+ results.innerHTML='';
+ services.filter(s=>s.serviceEn.toLowerCase().includes(filter.toLowerCase())||s.serviceGu.includes(filter))
+ .forEach(s=>{
+   const c=document.createElement('div');
+   c.className='card';
+   c.innerHTML=`<div class="en">${s.serviceEn}</div><div class="gu">${s.serviceGu}</div>`;
+   c.onclick=()=>showDetails(s);
+   results.appendChild(c);
+ });
 }
 
-results.innerHTML="";
-
-filtered.forEach(service=>{
-
-const card=document.createElement("div");
-
-card.className="card";
-
-card.innerHTML=`
-<div class="service-title">${service.serviceEn}</div>
-<div class="service-gu">${service.serviceGu}</div>
-
-<b>Required Documents:</b>
-
-<ul>
-${service.documents.map(doc=>`<li>${doc}</li>`).join("")}
-</ul>
-`;
-
-results.appendChild(card);
-
-});
-
+function showDetails(s){
+ document.getElementById('details').innerHTML=`<h2>${s.serviceEn}</h2><h3>${s.serviceGu}</h3><b>Required Documents</b><ul>${s.documents.map(d=>'<li>'+d+'</li>').join('')}</ul>`;
+ document.getElementById('modal').style.display='block';
 }
 
-document
-.getElementById("search")
-.addEventListener("input",function(e){
+function closeModal(){document.getElementById('modal').style.display='none';}
 
-renderServices(e.target.value);
-
-});
-
-renderServices();
-
+document.getElementById('search').addEventListener('input',e=>render(e.target.value));
+window.onclick=e=>{if(e.target.id==='modal') closeModal();}
+render();
 </script>
-
 </body>
 </html>
