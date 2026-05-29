@@ -14,8 +14,13 @@ body{
 }
 
 .container{
-    max-width:800px;
+    max-width:900px;
     margin:auto;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
 }
 
 .card{
@@ -26,57 +31,39 @@ body{
     box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
-input, textarea{
-    width:100%;
-    padding:10px;
-    margin-top:8px;
-    margin-bottom:10px;
-    border:1px solid #ccc;
-    border-radius:8px;
-    box-sizing:border-box;
-}
-
-button{
-    padding:10px 16px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-    margin-right:5px;
-}
-
-.save{
-    background:#2e7d32;
-    color:white;
-}
-
-.delete{
-    background:#d32f2f;
-    color:white;
-}
-
-h1{
-    text-align:center;
-}
-
 .service-title{
-    font-size:20px;
+    font-size:22px;
     font-weight:bold;
 }
 
 .service-gu{
-    color:#555;
-    margin-bottom:10px;
+    color:#666;
+    margin-top:5px;
+    margin-bottom:15px;
 }
 
 ul{
     padding-left:20px;
 }
 
-.search-box{
-    position:sticky;
-    top:0;
-    background:#f4f4f4;
-    padding-bottom:10px;
+li{
+    margin-bottom:5px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:10px;
+    box-sizing:border-box;
+    margin-bottom:20px;
+    font-size:16px;
+}
+
+.no-result{
+    text-align:center;
+    color:#888;
+    margin-top:30px;
 }
 </style>
 </head>
@@ -87,25 +74,11 @@ ul{
 
 <h1>Sugam Digital Services</h1>
 
-<div class="search-box">
-<input type="text" id="search" placeholder="Search Gujarati or English...">
-</div>
-
-<div class="card">
-<h3>Add New Service</h3>
-
-<input id="serviceEn" placeholder="Service Name (English)">
-<input id="serviceGu" placeholder="Service Name (Gujarati)">
-
-<textarea id="documents"
-placeholder="Documents (one per line)
-
-Aadhaar Card
-Ration Card
-PAN Card"></textarea>
-
-<button class="save" onclick="addService()">Save Service</button>
-</div>
+<input
+type="text"
+id="search"
+placeholder="Search Gujarati or English..."
+>
 
 <div id="results"></div>
 
@@ -113,8 +86,7 @@ PAN Card"></textarea>
 
 <script>
 
-let services =
-JSON.parse(localStorage.getItem("services")) || [
+const services = [
 
 {
 serviceEn:"Income Certificate",
@@ -123,7 +95,29 @@ documents:[
 "Aadhaar Card",
 "Ration Card",
 "PAN Card",
-"Salary Slip"
+"Residence Proof",
+"Income Proof",
+"Bank Passbook",
+"Passport Photo",
+"Mobile Number",
+"Affidavit"
+]
+},
+
+{
+serviceEn:"SEBC / OBC Certificate",
+serviceGu:"SEBC / OBC પ્રમાણપત્ર",
+documents:[
+"Aadhaar Card",
+"Ration Card",
+"School LC",
+"Birth Certificate",
+"Caste Certificate",
+"Residence Proof",
+"Voter ID",
+"Passport Photo",
+"Mobile Number",
+"Affidavit"
 ]
 },
 
@@ -134,63 +128,212 @@ documents:[
 "Aadhaar Card",
 "Ration Card",
 "Income Certificate",
-"PAN Card"
+"Property Documents",
+"Residence Proof",
+"PAN Card",
+"Bank Passbook",
+"Passport Photo",
+"Mobile Number"
+]
+},
+
+{
+serviceEn:"Non-Creamy Layer Certificate",
+serviceGu:"Non-Creamy Layer પ્રમાણપત્ર",
+documents:[
+"Aadhaar Card",
+"SEBC Certificate",
+"Ration Card",
+"3 Years Income Proof",
+"ITR/Form 16",
+"Salary Certificate",
+"Residence Proof",
+"Passport Photo",
+"Mobile Number"
+]
+},
+
+{
+serviceEn:"SC Caste Certificate",
+serviceGu:"SC જાતિ દાખલો",
+documents:[
+"Aadhaar Card",
+"Ration Card",
+"School LC",
+"Birth Certificate",
+"Caste Proof",
+"Residence Proof",
+"Voter ID",
+"Passport Photo",
+"Affidavit"
+]
+},
+
+{
+serviceEn:"ST Caste Certificate",
+serviceGu:"ST જાતિ દાખલો",
+documents:[
+"Aadhaar Card",
+"Ration Card",
+"School LC",
+"Gram Panchayat Certificate",
+"ST Certificate Proof",
+"Residence Proof",
+"Passport Photo",
+"Affidavit"
+]
+},
+
+{
+serviceEn:"Vimukt Jati Certificate",
+serviceGu:"વિમુક્ત જાતિ પ્રમાણપત્ર",
+documents:[
+"Aadhaar Card",
+"Ration Card",
+"School LC",
+"Caste Proof",
+"Residence Proof",
+"Passport Photo",
+"Gram Panchayat Certificate"
+]
+},
+
+{
+serviceEn:"New Ration Card",
+serviceGu:"નવું રેશન કાર્ડ",
+documents:[
+"Family Aadhaar Cards",
+"Electricity Bill",
+"Property Documents",
+"Gas Book",
+"Bank Passbook",
+"Income Certificate",
+"Passport Photo",
+"Mobile Number",
+"Old Ration Card (if any)"
+]
+},
+
+{
+serviceEn:"Add Name In Ration Card",
+serviceGu:"રેશન કાર્ડમાં નામ ઉમેરવું",
+documents:[
+"Birth Certificate",
+"Aadhaar Card",
+"Existing Ration Card"
+]
+},
+
+{
+serviceEn:"Remove Name From Ration Card",
+serviceGu:"રેશન કાર્ડમાંથી નામ રદ કરવું",
+documents:[
+"Death Certificate / Marriage Certificate",
+"Relevant Proof",
+"Existing Ration Card",
+"Aadhaar Card"
+]
+},
+
+{
+serviceEn:"Separate Ration Card",
+serviceGu:"અલગ રેશન કાર્ડ મેળવવા",
+documents:[
+"Family Separation Proof",
+"Aadhaar Card",
+"Residence Proof",
+"Existing Ration Card",
+"Income Certificate"
+]
+},
+
+{
+serviceEn:"Ration Card Correction",
+serviceGu:"રેશન કાર્ડમાં સુધારો",
+documents:[
+"Correction Proof",
+"Aadhaar Card",
+"Existing Ration Card"
+]
+},
+
+{
+serviceEn:"Duplicate Ration Card",
+serviceGu:"ડુપ્લિકેટ રેશન કાર્ડ",
+documents:[
+"Application",
+"Aadhaar Card",
+"Ration Card Number",
+"FIR (if lost)",
+"Mobile Number"
+]
+},
+
+{
+serviceEn:"Ration Card Copy",
+serviceGu:"રેશન કાર્ડ નકલ",
+documents:[
+"Application",
+"Identity Proof",
+"Relevant Details",
+"Fee Receipt"
+]
+},
+
+{
+serviceEn:"Non-Creamy Layer (Central)",
+serviceGu:"Non-Creamy Layer (ભારત સરકાર)",
+documents:[
+"Aadhaar Card",
+"SEBC Certificate",
+"3 Years Income Proof",
+"ITR",
+"Ration Card",
+"Residence Proof",
+"Passport Photo",
+"Mobile Number"
 ]
 }
 
 ];
 
-function saveData(){
-localStorage.setItem(
-"services",
-JSON.stringify(services)
-);
-}
-
 function renderServices(filter=""){
 
 const results=document.getElementById("results");
 
-results.innerHTML="";
+const filtered=services.filter(service=>{
 
-services
-.filter(service=>{
-
-const search=filter.toLowerCase();
-
-return service.serviceEn.toLowerCase().includes(search)
+return service.serviceEn.toLowerCase().includes(filter.toLowerCase())
 ||
 service.serviceGu.includes(filter);
 
-})
+});
 
-.forEach((service,index)=>{
+if(filtered.length===0){
+
+results.innerHTML=
+'<div class="no-result">No Service Found</div>';
+
+return;
+}
+
+results.innerHTML="";
+
+filtered.forEach(service=>{
 
 const card=document.createElement("div");
 
 card.className="card";
 
 card.innerHTML=`
-
-<div class="service-title">
-${service.serviceEn}
-</div>
-
-<div class="service-gu">
-${service.serviceGu}
-</div>
+<div class="service-title">${service.serviceEn}</div>
+<div class="service-gu">${service.serviceGu}</div>
 
 <b>Required Documents:</b>
 
 <ul>
 ${service.documents.map(doc=>`<li>${doc}</li>`).join("")}
 </ul>
-
-<button class="delete"
-onclick="deleteService(${index})">
-Delete
-</button>
-
 `;
 
 results.appendChild(card);
@@ -199,56 +342,9 @@ results.appendChild(card);
 
 }
 
-function addService(){
-
-const en=document.getElementById("serviceEn").value.trim();
-
-const gu=document.getElementById("serviceGu").value.trim();
-
-const docs=document
-.getElementById("documents")
-.value
-.split("\n")
-.filter(x=>x.trim()!="");
-
-if(!en || !gu){
-alert("Enter both English and Gujarati names");
-return;
-}
-
-services.push({
-serviceEn:en,
-serviceGu:gu,
-documents:docs
-});
-
-saveData();
-
-document.getElementById("serviceEn").value="";
-document.getElementById("serviceGu").value="";
-document.getElementById("documents").value="";
-
-renderServices();
-
-}
-
-function deleteService(index){
-
-if(confirm("Delete this service?")){
-
-services.splice(index,1);
-
-saveData();
-
-renderServices();
-
-}
-
-}
-
 document
 .getElementById("search")
-.addEventListener("input",e=>{
+.addEventListener("input",function(e){
 
 renderServices(e.target.value);
 
